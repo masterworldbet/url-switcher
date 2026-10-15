@@ -1,16 +1,14 @@
 create table if not exists public.switch_links (
   id uuid primary key default gen_random_uuid(),
   slug text not null unique check (slug ~ '^[a-z0-9-]{2,60}$'),
-  url_a text not null check (url_a ~ '^https://'),
-  url_b text not null check (url_b ~ '^https://'),
-  active_target text not null default 'A' check (active_target in ('A','B')),
+  destination_url text not null check (destination_url ~ '^https://'),
   created_at timestamptz not null default now(),
   updated_at timestamptz not null default now()
 );
 
 alter table public.switch_links enable row level security;
 
--- Logged-in users can manage records. For a single-admin setup, only create the one admin user.
+-- Logged-in users can manage records. For a single-admin setup, create only the intended admin user.
 create policy "authenticated read switch links"
 on public.switch_links for select to authenticated
 using (true);

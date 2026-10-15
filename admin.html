@@ -3,69 +3,62 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width,initial-scale=1">
-  <title>Admin — URL Switcher</title>
+  <meta name="theme-color" content="#0b1427">
+  <title>Masterworld | Link Console</title>
   <link rel="stylesheet" href="./styles.css">
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./admin.js"></script>
 </head>
 <body>
+  <div class="ambient ambient-one"></div><div class="ambient ambient-two"></div>
   <main class="shell wide">
     <header class="top">
-      <div><div class="eyebrow">ADMIN CONSOLE</div><h1>จัดการ URL Switcher</h1></div>
-      <a href="./index.html">หน้าแรก</a>
+      <a class="brand" href="./admin.html" aria-label="Masterworld Link Console home">
+        <span class="brand-mark">M</span><span><strong>MASTERWORLD</strong><small>LINK MANAGEMENT</small></span>
+      </a>
+      <a class="home-link" href="./index.html"><span aria-hidden="true">↗</span> หน้าแรก</a>
     </header>
 
-    <section class="card" id="auth-card">
-      <h2>เข้าสู่ระบบผู้ดูแล</h2>
-      <p class="muted">ใช้บัญชีผู้ดูแลที่สร้างไว้ใน Supabase เท่านั้น</p>
-      <form id="login-form">
-        <label>อีเมล<input id="email" type="email" autocomplete="username" required></label>
-        <label>รหัสผ่าน<input id="password" type="password" autocomplete="current-password" required></label>
-        <button type="submit">เข้าสู่ระบบ</button>
-      </form>
+    <section class="auth-layout" id="auth-card">
+      <div class="auth-intro"><div class="eyebrow"><span class="status-dot"></span> SECURE ADMIN CONSOLE</div><h1>จัดการลิงก์<br><span>อย่างเป็นระบบ</span></h1><p>พื้นที่สำหรับผู้ดูแล เพื่อสร้าง แก้ไข และจัดการ URL ปลายทางเดียวอย่างชัดเจน</p><div class="auth-foot"><span class="shield">◇</span> เข้าถึงได้เฉพาะบัญชีผู้ดูแล</div></div>
+      <div class="card auth-card"><div class="section-kicker">WELCOME BACK</div><h2>เข้าสู่ระบบ</h2><p class="muted">กรุณาใช้บัญชีผู้ดูแลที่ลงทะเบียนไว้</p>
+        <form id="login-form">
+          <label for="email">อีเมลผู้ดูแล<input id="email" type="email" autocomplete="username" placeholder="name@example.com" required></label>
+          <label for="password">รหัสผ่าน<input id="password" type="password" autocomplete="current-password" placeholder="กรอกรหัสผ่าน" required></label>
+          <button class="primary full" type="submit"><span>เข้าสู่ระบบ</span><span aria-hidden="true">→</span></button>
+        </form><p class="fine-print">ระบบจัดการ URL · Secure access</p>
+      </div>
     </section>
 
     <section id="app" hidden>
-      <div class="toolbar">
-        <p id="whoami" class="muted"></p>
-        <button id="logout" class="secondary">ออกจากระบบ</button>
+      <div class="welcome-row"><div><div class="eyebrow"><span class="status-dot"></span> ADMIN WORKSPACE</div><h1>แดชบอร์ด <span>จัดการลิงก์</span></h1><p class="muted">จัดการ URL ที่แสดงและใช้งานเหมือนกันสำหรับผู้เข้าชมทุกคน</p></div><div class="session-box"><div class="avatar">MW</div><div class="session-copy"><strong id="whoami">ผู้ดูแล</strong><small>Administrator</small></div><button id="logout" class="secondary logout-btn" type="button">ออกจากระบบ</button></div></div>
+      <div class="stats-grid">
+        <article class="stat-card"><div class="stat-icon">↗</div><div><p>ลิงก์ทั้งหมด</p><strong id="total-links">—</strong></div><span class="stat-note">รายการ</span></article>
+        <article class="stat-card"><div class="stat-icon silver">✓</div><div><p>ลิงก์พร้อมใช้งาน</p><strong id="ready-links">—</strong></div><span class="stat-note">รายการ</span></article>
+        <article class="stat-card"><div class="stat-icon pale">⌁</div><div><p>รูปแบบปลายทาง</p><strong class="stat-word">Single URL</strong></div><span class="stat-note">โปร่งใส</span></article>
       </div>
-      <section class="card">
-        <h2 id="form-title">เพิ่มลิงก์ใหม่</h2>
-        <form id="link-form">
-          <input id="row-id" type="hidden">
-          <label>Slug (ภาษาอังกฤษ ตัวเลข และขีดกลาง)
-            <input id="slug" pattern="[a-zA-Z0-9-]{2,60}" placeholder="campaign-a" required>
-          </label>
-          <div class="two">
-            <label>ปลายทาง A (HTTPS URL)
-              <input id="url-a" type="url" placeholder="https://example.com/page-a" required>
-            </label>
-            <label>ปลายทาง B (HTTPS URL)
-              <input id="url-b" type="url" placeholder="https://example.com/page-b" required>
-            </label>
-          </div>
-          <label>ปลายทางที่ใช้งาน
-            <select id="active-target"><option value="A">A</option><option value="B">B</option></select>
-          </label>
-          <div class="actions">
-            <button type="submit">บันทึก</button>
-            <button type="button" id="reset" class="secondary">ล้างฟอร์ม</button>
-          </div>
-        </form>
-        <p id="message" role="status"></p>
-      </section>
-
-      <section class="card">
-        <h2>ลิงก์ทั้งหมด</h2>
-        <div class="table-wrap">
-          <table>
-            <thead><tr><th>Slug</th><th>ใช้งาน</th><th>ลิงก์กลาง</th><th>จัดการ</th></tr></thead>
-            <tbody id="links-body"><tr><td colspan="4">กำลังโหลด…</td></tr></tbody>
-          </table>
-        </div>
-      </section>
+      <div class="content-grid">
+        <section class="card editor-card">
+          <div class="card-heading"><div><div class="section-kicker">LINK CONFIGURATION</div><h2 id="form-title">เพิ่มลิงก์ใหม่</h2><p class="muted">กำหนด slug และ URL ปลายทางเดียว</p></div><span class="heading-icon">＋</span></div>
+          <form id="link-form">
+            <input id="row-id" type="hidden">
+            <label for="slug">Slug <span class="label-hint">2–60 ตัวอักษร</span><input id="slug" pattern="[a-zA-Z0-9-]{2,60}" placeholder="campaign-a" autocomplete="off" required><small class="field-help">ใช้ภาษาอังกฤษตัวพิมพ์เล็ก ตัวเลข และขีดกลาง</small></label>
+            <label for="destination-url">URL ปลายทาง (HTTPS)<input id="destination-url" type="url" placeholder="https://example.com/page" inputmode="url" required><small class="field-help">ลิงก์นี้จะเป็นปลายทางเดียวสำหรับผู้เข้าชมทุกคน</small></label>
+            <div class="actions"><button class="primary" type="submit"><span>บันทึกลิงก์</span><span aria-hidden="true">→</span></button><button type="button" id="reset" class="secondary">ล้างฟอร์ม</button></div>
+            <p id="message" role="status" aria-live="polite"></p>
+          </form>
+        </section>
+        <section class="card list-card">
+          <div class="card-heading list-heading"><div><div class="section-kicker">YOUR URLS</div><h2>รายการลิงก์</h2><p class="muted">คัดลอกลิงก์กลางเพื่อใช้งานได้ทันที</p></div><button id="refresh" class="icon-button" type="button" title="โหลดข้อมูลใหม่" aria-label="โหลดข้อมูลใหม่">↻</button></div>
+          <div class="search-wrap"><span aria-hidden="true">⌕</span><input id="search-links" type="search" placeholder="ค้นหา slug หรือ URL…" aria-label="ค้นหาลิงก์"></div>
+          <div id="empty-state" class="empty-state" hidden><div class="empty-icon">⌁</div><strong>ยังไม่มีลิงก์</strong><p>เพิ่มลิงก์แรกได้จากแบบฟอร์มด้านซ้าย</p></div>
+          <div class="table-wrap"><table><thead><tr><th>SLUG / URL กลาง</th><th>สถานะ</th><th>จัดการ</th></tr></thead><tbody id="links-body"><tr><td colspan="3" class="loading-cell">กำลังโหลดรายการ…</td></tr></tbody></table></div>
+          <div class="list-footer"><span id="list-count">กำลังโหลด…</span><span><i class="status-dot"></i> ปลายทางเดียวกันทุกคน</span></div>
+        </section>
+      </div>
+      <footer class="dashboard-footer"><span>MASTERWORLD <b>·</b> LINK CONSOLE</span><span>จัดการลิงก์อย่างชัดเจนและตรวจสอบได้</span></footer>
     </section>
   </main>
+  <div id="toast" class="toast" role="status" aria-live="polite"></div>
 </body>
 </html>
