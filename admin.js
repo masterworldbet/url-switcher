@@ -1,7 +1,7 @@
 // Public browser config only. Never place the Supabase service_role key here.
 const SUPABASE_URL = "https://inpfnxduaeliboxhxqdf.supabase.co";
 const SUPABASE_ANON_KEY = "sb_publishable_8TKGFhnoLhOFhVYNaBO5XA_S-YuReMT";
-const WORKER_BASE_URL = "https://url-switcher-redirect.pongsakornby8.workers.dev/"; // e.g. https://my-worker.example.workers.dev
+const WORKER_BASE_URL = "https://master.worldshop.workers.dev"; // e.g. https://my-worker.example.workers.dev
 
 const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const $ = (id) => document.getElementById(id);
