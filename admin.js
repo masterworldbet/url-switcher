@@ -8,6 +8,7 @@ const client = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
 const $ = (id) => document.getElementById(id);
 const authCard = $("auth-card"), app = $("app"), message = $("message");
 let cachedLinks = [];
+let legacyMode = false;
 let toastTimer;
 
 function say(text, type = "") {
@@ -126,32 +127,59 @@ $("link-form").addEventListener("submit", async (event) => {
 async function loadLinks() {
   const tbody = $("links-body");
   tbody.replaceChildren();
-  tbody.append(el("tr", "", ""));
-  const loadingCell = el("td", "loading-cell", "กำลังโหลดรายการ…");
-  loadingCell.colSpan = 3; tbody.firstChild.append(loadingCell);
-  const { data, error } = await client.from(TABLE).select("id,slug,destination_url,created_at").order("created_at", { ascending: false });
-  if (error) {
-    tbody.replaceChildren();
-    const tr = el("tr"); const td = el("td", "loading-cell", /destination_url|column/i.test(error.message)
-      ? "ต้องอัปเดตฐานข้อมูลก่อน: รันไฟล์ supabase/migrate_single_destination.sql"
-      : "โหลดข้อมูลไม่สำเร็จ: " + error.message);
-    td.colSpan = 3; tr.append(td); tbody.append(tr);
-    $("list-count").textContent = "โหลดข้อมูลไม่สำเร็จ";
-    showToast("โหลดรายการไม่สำเร็จ", "error");
+  const trLoading = el("tr");
+  const tdLoading = el("td", "loading-cell", "กำลังโหลดรายการ…");
+  tdLoading.colSpan = 3; trLoading.append(tdLoading); tbody.append(trLoading);
+
+  // First try the new single-destination schema.
+  const current = await client.from(TABLE)
+    .select("id,slug,destination_url,created_at")
+    .order("created_at", { ascending: false });
+
+  if (!current.error) {
+    legacyMode = false;
+    cachedLinks = (current.data || []).map(item => ({ ...item, _legacy: false }));
+    updateStats(cachedLinks);
+    renderLinks();
     return;
   }
-  cachedLinks = data || [];
-  updateStats(cachedLinks);
-  renderLinks();
+
+  // Existing installations may still have the old schema. Read it without
+  // modifying anything so existing records remain visible until migration.
+  const legacy = await client.from(TABLE)
+    .select("id,slug,url_a,url_b,active_target,created_at")
+    .order("created_at", { ascending: false });
+
+  if (!legacy.error) {
+    legacyMode = true;
+    cachedLinks = (legacy.data || []).map(item => ({
+      ...item,
+      _legacy: true,
+      // Show which destination was active in the old configuration, but do not
+      // silently convert or change the saved data.
+      destination_url: item.active_target === "B" ? item.url_b : item.url_a
+    }));
+    updateStats(cachedLinks);
+    renderLinks();
+    showToast("พบข้อมูลเดิมแล้ว แสดงแบบอ่านอย่างเดียวจนกว่าจะย้ายฐานข้อมูล", "error");
+    return;
+  }
+
+  tbody.replaceChildren();
+  const tr = el("tr");
+  const td = el("td", "loading-cell", "โหลดข้อมูลไม่สำเร็จ: ตรวจสอบสิทธิ์ Supabase และโครงสร้างตาราง switch_links");
+  td.colSpan = 3; tr.append(td); tbody.append(tr);
+  $("list-count").textContent = "โหลดข้อมูลไม่สำเร็จ";
+  showToast("โหลดรายการไม่สำเร็จ", "error");
 }
 
 function renderLinks() {
   const tbody = $("links-body");
   tbody.replaceChildren();
   const q = $("search-links").value.trim().toLowerCase();
-  const filtered = cachedLinks.filter(item => `${item.slug} ${item.destination_url || ""}`.toLowerCase().includes(q));
+  const filtered = cachedLinks.filter(item => `${item.slug} ${item.destination_url || ""} ${item.url_a || ""} ${item.url_b || ""}`.toLowerCase().includes(q));
   $("empty-state").hidden = filtered.length > 0;
-  $("list-count").textContent = `${filtered.length} จาก ${cachedLinks.length} รายการ`;
+  $("list-count").textContent = `${filtered.length} จาก ${cachedLinks.length} รายการ${legacyMode ? " · ข้อมูลเดิม (อ่านอย่างเดียว)" : ""}`;
   if (!filtered.length) {
     const tr = el("tr"); const td = el("td", "loading-cell", cachedLinks.length ? "ไม่พบรายการที่ค้นหา" : "ยังไม่มีลิงก์");
     td.colSpan = 3; tr.append(td); tbody.append(tr); return;
@@ -164,30 +192,36 @@ function renderLinks() {
     info.append(el("small", "", url));
     tr.append(info);
     const statusCell = el("td");
-    statusCell.append(el("span", "status-pill", "● พร้อมใช้งาน"));
+    statusCell.append(el("span", "status-pill", item._legacy ? "ข้อมูลเดิม · ยังไม่ย้าย" : "● พร้อมใช้งาน"));
     tr.append(statusCell);
     const actionCell = el("td");
     const actions = el("div", "row-actions");
-    const copy = el("button", "small-btn copy-btn", "คัดลอก URL");
-    copy.type = "button"; copy.addEventListener("click", () => copyUrl(url));
-    const edit = el("button", "small-btn secondary", "แก้ไข");
-    edit.type = "button"; edit.addEventListener("click", () => {
-      $("row-id").value = item.id;
-      $("slug").value = item.slug;
-      $("destination-url").value = item.destination_url || "";
-      $("form-title").textContent = "แก้ไข " + item.slug;
-      window.scrollTo({ top: 0, behavior: "smooth" });
-      $("slug").focus({ preventScroll: true });
-    });
-    const del = el("button", "small-btn danger", "ลบ");
-    del.type = "button"; del.addEventListener("click", async () => {
-      if (!confirm(`ยืนยันลบลิงก์ “${item.slug}” ใช่หรือไม่?`)) return;
-      del.disabled = true;
-      const { error } = await client.from(TABLE).delete().eq("id", item.id);
-      if (error) { showToast("ลบไม่สำเร็จ: " + error.message, "error"); del.disabled = false; }
-      else { showToast("ลบลิงก์แล้ว"); await loadLinks(); }
-    });
-    actions.append(copy, edit, del); actionCell.append(actions); tr.append(actionCell);
+    if (item._legacy) {
+      const note = el("small", "field-help", "ปลอดภัยกว่า: ย้ายข้อมูลเป็นปลายทางเดียวก่อนแก้ไข");
+      actions.append(note);
+    } else {
+      const copy = el("button", "small-btn copy-btn", "คัดลอก URL");
+      copy.type = "button"; copy.addEventListener("click", () => copyUrl(url));
+      const edit = el("button", "small-btn secondary", "แก้ไข");
+      edit.type = "button"; edit.addEventListener("click", () => {
+        $("row-id").value = item.id;
+        $("slug").value = item.slug;
+        $("destination-url").value = item.destination_url || "";
+        $("form-title").textContent = "แก้ไข " + item.slug;
+        window.scrollTo({ top: 0, behavior: "smooth" });
+        $("slug").focus({ preventScroll: true });
+      });
+      const del = el("button", "small-btn danger", "ลบ");
+      del.type = "button"; del.addEventListener("click", async () => {
+        if (!confirm(`ยืนยันลบลิงก์ “${item.slug}” ใช่หรือไม่?`)) return;
+        del.disabled = true;
+        const { error } = await client.from(TABLE).delete().eq("id", item.id);
+        if (error) { showToast("ลบไม่สำเร็จ: " + error.message, "error"); del.disabled = false; }
+        else { showToast("ลบลิงก์แล้ว"); await loadLinks(); }
+      });
+      actions.append(copy, edit, del);
+    }
+    actionCell.append(actions); tr.append(actionCell);
     tbody.append(tr);
   }
 }
