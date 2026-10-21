@@ -56,11 +56,48 @@ async function loadLinks() {
     const cells = [item.slug, item.active_target, item.pixel_group?.toUpperCase() || "Direct", link];
     for (const value of cells) {
       const td = document.createElement("td");
-      if (value === link) { const a = document.createElement("a"); a.href = link; a.textContent = link; a.target = "_blank"; a.rel = "noopener noreferrer"; td.appendChild(a); }
-      else td.textContent = value;
+      if (value === link) {
+        td.className = "link-cell";
+        const wrap = document.createElement("div");
+        wrap.className = "link-actions";
+        const a = document.createElement("a");
+        a.href = link;
+        a.textContent = link;
+        a.title = link;
+        a.target = "_blank";
+        a.rel = "noopener noreferrer";
+        const copy = document.createElement("button");
+        copy.type = "button";
+        copy.className = "copy-link-btn";
+        copy.textContent = "คัดลอก";
+        copy.setAttribute("aria-label", `คัดลอกลิงก์ ${item.slug}`);
+        copy.addEventListener("click", async () => {
+          try {
+            await navigator.clipboard.writeText(link);
+            copy.textContent = "คัดลอกแล้ว ✓";
+            window.setTimeout(() => { copy.textContent = "คัดลอก"; }, 1800);
+          } catch {
+            // Clipboard API may require HTTPS or browser permission.
+            window.prompt("คัดลอกลิงก์นี้", link);
+          }
+        });
+        wrap.append(a, copy);
+        td.appendChild(wrap);
+      } else if (value === item.slug) {
+        td.className = "slug-text";
+        td.textContent = value;
+      } else if (value === (item.pixel_group?.toUpperCase() || "Direct")) {
+        const pill = document.createElement("span");
+        pill.className = `group-pill group-${item.pixel_group || "direct"}`;
+        pill.textContent = value;
+        td.appendChild(pill);
+      } else {
+        td.textContent = value;
+      }
       tr.appendChild(td);
     }
     const td = document.createElement("td");
+    td.className = "table-buttons";
     const edit = document.createElement("button"); edit.className = "small-btn secondary"; edit.textContent = "แก้ไข";
     edit.addEventListener("click", () => {
       $("row-id").value = item.id; $("slug").value = item.slug; $("url-a").value = item.url_a;
