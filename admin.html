@@ -44,6 +44,61 @@ tbody tr:hover{background:#fafbff}
 .table-buttons button+button{margin-left:6px}
 @media(max-width:700px){.shell.wide{padding:12px;margin:12px auto}.card{padding:18px;border-radius:17px}.top{padding:8px 6px}.two{grid-template-columns:1fr}th,td{padding:12px 10px}.link-actions a{max-width:180px}}
 
+
+/* URL Switcher Admin — Dark Edition v1.1. Presentation only. */
+:root{color-scheme:dark;--primary:#617dff;--primary-hover:#7690ff;--border:#273247;--muted:#94a3b8;--surface:#141c2b;--shadow:0 18px 48px rgba(0,0,0,.24)}
+html{background:#080d17}
+body{color:#e9eefc;background:radial-gradient(ellipse 65% 35% at 15% -5%,rgba(68,91,181,.22),transparent 85%),radial-gradient(ellipse 55% 45% at 100% 15%,rgba(50,80,120,.11),transparent 80%),#080d17;min-height:100vh}
+.shell.wide{max-width:1230px;margin:22px auto;padding:18px 24px 56px}
+.top{padding:15px 8px 21px;border-bottom:1px solid #1c283b;margin-bottom:20px;align-items:center}
+.top h1{font-size:clamp(26px,3vw,38px);color:#f5f7ff;margin:7px 0 0;letter-spacing:-.045em}
+.eyebrow{color:#8fa4ff;font-size:11px;letter-spacing:.2em}
+.header-right{display:flex;align-items:center;gap:18px}
+.version-tag{font-size:12px;font-weight:800;letter-spacing:.07em;color:#a6b6ff;background:#1c2850;border:1px solid #34477e;padding:7px 12px;border-radius:999px;box-shadow:inset 0 1px 0 rgba(255,255,255,.04)}
+.top a{color:#b5c4e8;font-size:13px;text-decoration:none}
+.top a:hover{color:#fff}
+.card{background:linear-gradient(150deg,#151e2e,#111927 75%);border:1px solid #29354b;border-radius:20px;box-shadow:0 16px 48px rgba(0,0,0,.24);padding:28px 30px;margin:20px 0}
+.card h2{font-size:19px;color:#f4f7ff;font-weight:800;margin:0 0 21px;letter-spacing:-.02em}
+.card h2:before{content:"";display:inline-block;width:5px;height:18px;border-radius:8px;background:linear-gradient(#91a3ff,#4d69f2);margin-right:12px;vertical-align:-3px}
+.toolbar{padding:0 8px 4px}
+.muted{color:#93a2bd!important}
+#whoami{font-size:13px}
+label{color:#bdc9df;font-size:13px;font-weight:700;margin:17px 0}
+input,select{background:#0c1422!important;border:1px solid #303d56!important;color:#eaf0ff!important;border-radius:11px!important;padding:13px 14px!important;min-height:47px;box-shadow:inset 0 1px 2px rgba(0,0,0,.12)}
+input::placeholder{color:#697b98!important}
+input:focus,select:focus{outline:none;border-color:#7892ff!important;box-shadow:0 0 0 3px rgba(100,125,255,.18)!important}
+select option{background:#111b2b;color:#eaf0ff}
+button{border-radius:10px;transition:background .15s,transform .15s,border-color .15s,box-shadow .15s}
+button:not(.secondary):not(.danger):not(.copy-link-btn){background:linear-gradient(135deg,#5473f4,#3c58d8);border:1px solid #6a83ff;color:#fff;box-shadow:0 5px 18px rgba(64,94,220,.16)}
+button:not(.secondary):not(.danger):not(.copy-link-btn):hover{background:linear-gradient(135deg,#6987ff,#4c68e7)}
+button.secondary{background:#222e42;color:#d4e0f8;border:1px solid #34425a}
+button.secondary:hover{background:#2c3b54}
+button.danger{background:#512333;color:#ffb8c4;border:1px solid #813349}
+button.danger:hover{background:#682b3f}
+.actions{margin-top:23px}
+.table-wrap{border:1px solid #2b3850;border-radius:14px;overflow-x:auto;background:#101827}
+table{border-collapse:collapse;min-width:760px}
+thead{background:#1b2638}
+th{background:#1b2638!important;color:#9aabc8!important;font-size:11px;font-weight:800;letter-spacing:.07em}
+th,td{padding:17px 14px;text-align:left;vertical-align:middle;border-bottom:1px solid #283449!important}
+tbody tr{border-top:0}
+tbody tr:hover{background:#1b2940!important}
+tbody tr:last-child td{border-bottom:0!important}
+td{color:#dbe5f8;font-size:13px}
+.slug-text{color:#f2f6ff;font-weight:800;letter-spacing:.01em}
+.link-actions a{color:#8eacff;font-size:12px;max-width:380px}
+.link-actions a:hover{color:#bfd0ff;text-decoration:underline}
+.copy-link-btn{background:#26365a!important;color:#c0d1ff!important;border:1px solid #3c5285!important;padding:8px 12px!important;font-size:12px!important}
+.copy-link-btn:hover{background:#304779!important}
+.group-pill{background:#273246;color:#a9b8d0;padding:6px 12px}
+.group-pill.group-a{background:#193758;color:#8cc6ff}
+.group-pill.group-b{background:#382650;color:#d2a6ff}
+.table-buttons button{min-height:34px;padding:7px 12px;font-size:12px}
+#message{font-weight:650;font-size:13px}
+#message.ok{color:#6ee7b7}#message.error{color:#fda4af}
+#auth-card{max-width:620px;margin:48px auto}
+@media(max-width:700px){.shell.wide{margin:0 auto;padding:12px 13px 40px}.top{padding:16px 3px;gap:14px}.top h1{font-size:25px}.header-right{gap:9px}.version-tag{padding:6px 9px}.card{padding:20px 16px;border-radius:16px}.two{grid-template-columns:1fr}.table-wrap{margin:0 -3px}th,td{padding:12px 10px}.link-actions a{max-width:185px}}
+
   </style>
   <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
   <script defer src="./admin.js"></script>
@@ -52,7 +107,7 @@ tbody tr:hover{background:#fafbff}
   <main class="shell wide">
     <header class="top">
       <div><div class="eyebrow">ADMIN CONSOLE</div><h1>จัดการ URL Switcher</h1></div>
-      <a href="./index.html">หน้าแรก</a>
+      <div class="header-right"><span class="version-tag" title="Admin UI version">v1.1</span><a href="./index.html">หน้าแรก ↗</a></div>
     </header>
 
     <section class="card" id="auth-card">
