@@ -48,6 +48,9 @@
           <label>ปลายทางที่ใช้งาน
             <select id="active-target"><option value="A">A</option><option value="B">B</option></select>
           </label>
+          <label>กลุ่ม Analytics ของ Slug นี้ (ไม่เกี่ยวกับปลายทาง A/B)
+            <select id="pixel-group"><option value="">ไม่ระบุ (Direct)</option><option value="a">Pixel A</option><option value="b">Pixel B</option></select>
+          </label>
           <div class="actions">
             <button type="submit">บันทึก</button>
             <button type="button" id="reset" class="secondary">ล้างฟอร์ม</button>
@@ -60,8 +63,8 @@
         <h2>ลิงก์ทั้งหมด</h2>
         <div class="table-wrap">
           <table>
-            <thead><tr><th>Slug</th><th>ใช้งาน</th><th>ลิงก์กลาง</th><th>จัดการ</th></tr></thead>
-            <tbody id="links-body"><tr><td colspan="4">กำลังโหลด…</td></tr></tbody>
+            <thead><tr><th>Slug</th><th>ใช้งาน</th><th>กลุ่ม Analytics</th><th>ลิงก์กลาง</th><th>จัดการ</th></tr></thead>
+            <tbody id="links-body"><tr><td colspan="5">กำลังโหลด…</td></tr></tbody>
           </table>
         </div>
       </section>
